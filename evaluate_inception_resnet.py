@@ -53,24 +53,30 @@ with tf.device('/CPU:0'):
 
     score_list = []
 
-    for img_path in imgs:
-        img = load_img(img_path, target_size=target_size)
-        x = img_to_array(img)
-        x = np.expand_dims(x, axis=0)
+    with open("nima_results.csv", "w") as f:
+      count = 0
+      for img_path in imgs:
+          img = load_img(img_path, target_size=target_size)
+          x = img_to_array(img)
+          x = np.expand_dims(x, axis=0)
 
-        x = preprocess_input(x)
+          x = preprocess_input(x)
 
-        scores = model.predict(x, batch_size=1, verbose=0)[0]
+          scores = model.predict(x, batch_size=1, verbose=0)[0]
 
-        mean = mean_score(scores)
-        std = std_score(scores)
+          mean = mean_score(scores)
+          std = std_score(scores)
 
-        file_name = Path(img_path).name.lower()
-        score_list.append((file_name, mean))
+          file_name = Path(img_path).name.lower()
+          score_list.append((file_name, mean))
 
-        print("Evaluating : ", img_path)
-        print("NIMA Score : %0.3f +- (%0.3f)" % (mean, std))
-        print()
+          # print("Evaluating : ", img_path)
+          # print("NIMA Score : %0.3f +- (%0.3f)" % (mean, std))
+          # print()
+          f.write(f"{img_path}, {mean}, {std}\n")
+          count += 1
+          if count % 50 == 0:
+            print(f"Evaluated {count} images.")
 
     if rank_images:
         print("*" * 40, "Ranking Images", "*" * 40)
