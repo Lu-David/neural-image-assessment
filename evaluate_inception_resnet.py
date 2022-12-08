@@ -1,12 +1,12 @@
 import numpy as np
 import argparse
-from path import Path
+from pathlib import Path
 
 from keras.models import Model
 from keras.layers import Dense, Dropout
 from keras.applications.inception_resnet_v2 import InceptionResNetV2
 from keras.applications.inception_resnet_v2 import preprocess_input
-from keras.preprocessing.image import load_img, img_to_array
+from keras.utils import load_img, img_to_array
 import tensorflow as tf
 
 from utils.score_utils import mean_score, std_score
@@ -32,9 +32,9 @@ rank_images = args.rank.lower() in ("true", "yes", "t", "1")
 # give priority to directory
 if args.dir is not None:
     print("Loading images from directory : ", args.dir)
-    imgs = Path(args.dir).files('*.png')
-    imgs += Path(args.dir).files('*.jpg')
-    imgs += Path(args.dir).files('*.jpeg')
+    imgs = list(Path(args.dir).iterdir())
+    # imgs += Path(args.dir).files('*.jpg')
+    # imgs += Path(args.dir).files('*.jpeg')
 
 elif args.img[0] is not None:
     print("Loading images from path(s) : ", args.img)
